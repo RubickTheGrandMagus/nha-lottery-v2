@@ -18,8 +18,8 @@
 	<div class="columns">
 		<div class="column">
 			<details>
-				<summary class="is-size-3">
-					PARTICIPANTS
+				<summary class="is-size-3 has-text-centered">
+					PARTICIPANTS ({peers.length})
 				</summary>
 				<div class="content">
 					<div class="field is-grouped">
@@ -36,8 +36,8 @@
 		</div>
 		<div class="column">
 			<details>
-				<summary class="is-size-3">
-					AVAILABLE HOUSING UNITS
+				<summary class="is-size-3 has-text-centered">
+					AVAILABLE HOUSING UNITS ({housing.length})
 				</summary>
 				<div class="content">
 					<div class="field is-grouped">
@@ -56,10 +56,29 @@
 	<hr>
 	<div class="columns">
 		<div class="column has-text-centered">
-			<button class="is-large button is-success is-rounded">Generate &nbsp;<span class="zap">⚡</span></button>
+			<button class="is-large button is-success is-rounded" on:click={()=>{generate();modal=true}}>Generate &nbsp;<span class="zap">⚡</span></button>
 		</div>
 	</div>
+	<div class="columns">
+		<div class="column has-text-centered">
+			{#each output as item}
+				<div class="notification is-info">{item}</div>
+			{/each}
+		</div>
+	</div>
+	<div class="modal" class:is-active={modal==true}>
+		<div class="modal-background"></div>
+		<div class="modal-content box has-text-centered is-size-1 has-text-weight-bold">
+		   <span class="winner icon has-text-warning">🌟</span> &nbsp;{congrats} &nbsp;<span class="winner icon has-text-warning">🌟</span>
+		</div>
+		<button class="modal-close is-large" aria-label="close" on:click={()=>modal=false}></button>
+	  </div>
 </div>
+{#if congrats}
+		{#each confetti as c}
+			<span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" out:fade>{c.character}</span>
+		{/each}
+{/if}
 
 <style>
 	  .nha-subdiv:hover>span{
@@ -100,14 +119,35 @@
 		90% { transform: translate(1px, 2px) rotate(0deg); }
 		100% { transform: translate(1px, -2px) rotate(-1deg); }
 	}
+	.winner{
+		animation: rubberBand 1s infinite;
+		text-shadow: 2px 2px black;
+	}
+
+	@keyframes rubberBand {
+		from {transform: scale3d(1, 1, 1)}
+		30% {transform: scale3d(1.25, 0.75, 1)}
+		40% {transform: scale3d(0.75, 1.25, 1)}
+		50% {transform: scale3d(1.15, 0.85, 1)}
+		65% {transform: scale3d(.95, 1.05, 1)}
+		75% {transform: scale3d(1.05, .95, 1)}
+		to {transform: scale3d(1, 1, 1)}
+	}
 </style>
 
 <script>
+	  import {fade} from 'svelte/transition'
+	  import {onMount} from 'svelte'
+
 	  let peers = []
 	  let housing = []
+	  let winners = []
+	  let output = []
+	  let congrats = ''
 	  let inputPeer = ''
 	  let inputNHA = ''
 	  let SubDiv = "Enter Housing Subdivision"
+	  let modal = false
 
 	  function addParticipants(e,d=false){ //d is true when using the submit button
 		let peer = (typeof e ==='object')? e.target.value:e
@@ -168,4 +208,56 @@
 		});
 		inputNHA="" //reset inputPeer
 	  }
+
+	  function generate(){
+		  if(peers.length<=0) return alert("There are no participants.")
+		  if(housing.length<=0) return alert("There are no housing units.")
+		
+		  if(winners.length<=0){
+			housing.forEach(item=>{
+				const index = Math.floor(Math.random()*peers.length)
+				winners = [...winners, peers[index]]
+			})
+		  }
+
+		  const index = output.length
+
+		  if(index >= winners.length) return alert("Raffle Finished")
+		  output = [...output,`${housing[index]} - ${peers[index]}`]
+		  congrats = {winner:peers[index],nha:housing[index]}
+	  }
+
+	  function assignThis(){
+		   
+	  }
+
+	  let characters = ['🥳', '🎉', '🎈'];
+	  let confetti = new Array(100).fill()
+		.map((_, i) => {
+			return {
+				character: characters[i % characters.length],
+				x: Math.random() * 100,
+				y: -20 - Math.random() * 100,
+				r: 0.1 + Math.random() * 1
+			};
+		})
+		.sort((a, b) => a.r - b.r);
+	
+	onMount(() => {
+		let frame;
+
+		function loop() {
+			frame = requestAnimationFrame(loop);
+
+			confetti = confetti.map(emoji => {
+				emoji.y += 0.7 * emoji.r;
+				if (emoji.y > 120) emoji.y = -20;
+				return emoji;
+			});
+		}
+
+		loop();
+
+		return () => cancelAnimationFrame(frame);
+	});
 </script>
