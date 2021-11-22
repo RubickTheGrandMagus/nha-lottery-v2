@@ -56,29 +56,41 @@
 	<hr>
 	<div class="columns">
 		<div class="column has-text-centered">
-			<button class="is-large button is-success is-rounded" on:click={()=>{generate();modal=true}}>Generate &nbsp;<span class="zap">⚡</span></button>
+			<button class="is-large button is-success is-rounded" on:click={()=>modal=generate()}>Generate &nbsp;<span class="zap">⚡</span></button>
+			<button class="is-large button is-danger is-rounded" on:click={()=>{winners=[];output=[]}}>Reset</button>
 		</div>
 	</div>
 	<div class="columns">
 		<div class="column has-text-centered">
 			{#each output as item}
-				<div class="notification is-info">{item}</div>
+				<div class="notification is-info is-size-2">{item}</div>
 			{/each}
 		</div>
 	</div>
 	<div class="modal" class:is-active={modal==true}>
 		<div class="modal-background"></div>
 		<div class="modal-content box has-text-centered is-size-1 has-text-weight-bold">
-		   <span class="winner icon has-text-warning">🌟</span> &nbsp;{congrats} &nbsp;<span class="winner icon has-text-warning">🌟</span>
+			<p>
+				<span class="winner icon has-text-warning">🌟</span> &nbsp;{congrats.winner} &nbsp;<span class="winner icon has-text-warning">🌟</span>
+			</p>
+			<p>
+				<span class="b-icon icon is-size-1 has-text-danger">
+					<i class="fa fa-home" aria-hidden="true"></i>
+				</span>
+				{congrats.housing}
+				<span class="b-icon icon is-size-1 has-text-danger">
+					<i class="fa fa-home" aria-hidden="true"></i>
+				</span>
+			</p>
 		</div>
 		<button class="modal-close is-large" aria-label="close" on:click={()=>modal=false}></button>
 	  </div>
-</div>
-{#if congrats}
-		{#each confetti as c}
-			<span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" out:fade>{c.character}</span>
-		{/each}
-{/if}
+	</div>
+	{#if modal}
+			{#each confetti as c}
+				<span class="props" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" out:fade>{c.character}</span>
+			{/each}
+	{/if}
 
 <style>
 	  .nha-subdiv:hover>span{
@@ -133,6 +145,8 @@
 		75% {transform: scale3d(1.05, .95, 1)}
 		to {transform: scale3d(1, 1, 1)}
 	}
+
+	.props{ position:absolute;font-size:5vw;user-select: none;}
 </style>
 
 <script>
@@ -143,7 +157,7 @@
 	  let housing = []
 	  let winners = []
 	  let output = []
-	  let congrats = ''
+	  let congrats = {winner:'',housing:''}
 	  let inputPeer = ''
 	  let inputNHA = ''
 	  let SubDiv = "Enter Housing Subdivision"
@@ -213,18 +227,21 @@
 		  if(peers.length<=0) return alert("There are no participants.")
 		  if(housing.length<=0) return alert("There are no housing units.")
 		
-		  if(winners.length<=0){
+		  if(winners.length<housing.length){
+			let nlist = peers
 			housing.forEach(item=>{
-				const index = Math.floor(Math.random()*peers.length)
-				winners = [...winners, peers[index]]
+				const index = Math.floor(Math.random()*nlist.length)
+				winners = [...winners, nlist[index]]
+				nlist = nlist.filter(t=>t!=nlist[index])
 			})
 		  }
 
 		  const index = output.length
 
 		  if(index >= winners.length) return alert("Raffle Finished")
-		  output = [...output,`${housing[index]} - ${peers[index]}`]
-		  congrats = {winner:peers[index],nha:housing[index]}
+		  output = [...output,`${housing[index]} - ${winners[index]}`]
+		  congrats = {winner:winners[index],housing:housing[index]}
+		  return true
 	  }
 
 	  function assignThis(){
