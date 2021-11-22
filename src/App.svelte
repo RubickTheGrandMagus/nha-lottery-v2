@@ -238,7 +238,7 @@
 
 		  const index = output.length
 
-		  if(index >= winners.length) return alert("Raffle Finished")
+		  if(index >= housing.length) return alert("Raffle Finished")
 		  output = [...output,`${housing[index]} - ${winners[index]}`]
 		  congrats = {winner:winners[index],housing:housing[index]}
 		  return true
