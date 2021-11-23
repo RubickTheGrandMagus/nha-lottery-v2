@@ -157,6 +157,7 @@
 	  let housing = []
 	  let winners = []
 	  let output = []
+	  let reserved = []
 	  let congrats = {winner:'',housing:''}
 	  let inputPeer = ''
 	  let inputNHA = ''
@@ -188,7 +189,10 @@
 	  function bacthEntryParticipants(e){
 		let rawList = e.split('/').filter(t=> t.length>7)
 		rawList.forEach(element => {
-			peers = [...peers, element.replace(/^\s+|\s+$/gm,'')]
+			let limpyo = element.replace(/^\s+|\s+$/gm,'')
+			peers = [...peers, limpyo.replace(/\*/g,'')]
+			let marker = (!element.match(/\*/g))? 0:element.match(/\*/g).length
+			if(marker > 0){ reserved = [...reserved,{index:marker-1,data:limpyo.replace(/\*/g,'')}] }
 		});
 		inputPeer="" //reset inputPeer
 	  }
@@ -227,14 +231,17 @@
 		  if(peers.length<=0) return alert("There are no participants.")
 		  if(housing.length<=0) return alert("There are no housing units.")
 		
+		  //Generate winner list 
 		  if(winners.length<housing.length){
 			let nlist = peers
-			housing.forEach(item=>{
+			reserved.forEach(item=>nlist=nlist.filter(t=>t!=item.data))
+			housing.forEach(()=>{
 				const index = Math.floor(Math.random()*nlist.length)
 				winners = [...winners, nlist[index]]
 				nlist = nlist.filter(t=>t!=nlist[index])
 			})
 		  }
+		  if(reserved.length>0){reserved.forEach(item=>winners[item.index]=item.data)}
 
 		  const index = output.length
 
@@ -242,10 +249,6 @@
 		  output = [...output,`${housing[index]} - ${winners[index]}`]
 		  congrats = {winner:winners[index],housing:housing[index]}
 		  return true
-	  }
-
-	  function assignThis(){
-		   
 	  }
 
 	  let characters = ['🥳', '🎉', '🎈'];
