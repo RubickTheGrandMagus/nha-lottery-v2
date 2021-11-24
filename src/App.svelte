@@ -57,7 +57,7 @@
 	<div class="columns">
 		<div class="column has-text-centered">
 			<button class="is-large button is-success is-rounded" on:click={()=>modal=generate()}>Generate &nbsp;<span class="zap">⚡</span></button>
-			<button class="is-large button is-danger is-rounded" on:click={()=>{winners=[];output=[]}}>Reset</button>
+			<button class="is-large button is-danger is-rounded" on:click={()=>{winners=[];output=[]}}><span class="icon is-small xrotate"><i class="fa fa-history"  aria-hidden="true"></i></span></button>
 		</div>
 	</div>
 	<div class="columns">
@@ -147,6 +147,13 @@
 	}
 
 	.props{ position:absolute;font-size:5vw;user-select: none;}
+
+	.xrotate:hover{
+		animation: rotate 2s linear infinite;
+	}
+	@keyframes rotate{
+		100%{ transform: rotate(-360deg);}
+	}
 </style>
 
 <script>
