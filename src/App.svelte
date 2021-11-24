@@ -56,7 +56,11 @@
 	<hr>
 	<div class="columns">
 		<div class="column has-text-centered">
-			<button class="is-large button is-success is-rounded" on:click={()=>modal=generate()}>Generate &nbsp;<span class="zap">⚡</span></button>
+			{#if output.length==housing.length}
+				<button class="is-large button is-info is-rounded">Print Result &nbsp; 🖨️</button>
+			{:else}
+				<button class="is-large button is-success is-rounded" on:click={()=>modal=generate()}>Generate &nbsp;<span class="zap">⚡</span></button>
+			{/if}
 			<button class="is-large button is-danger is-rounded" on:click={()=>{winners=[];output=[]}}><span class="icon is-small xrotate"><i class="fa fa-history"  aria-hidden="true"></i></span></button>
 		</div>
 	</div>
@@ -67,10 +71,11 @@
 			{/each}
 		</div>
 	</div>
-	<div class="modal" class:is-active={modal==true}>
+	{#if modal}
+	<div class="modal is-active" in:scale={{duration:2000}}>
 		<div class="modal-background"></div>
 		<div class="modal-content box has-text-centered is-size-1 has-text-weight-bold">
-			<p>
+			<p in:spin={{duration:20000}}>
 				<span class="winner icon has-text-warning">🌟</span> &nbsp;{congrats.winner} &nbsp;<span class="winner icon has-text-warning">🌟</span>
 			</p>
 			<p>
@@ -85,6 +90,7 @@
 		</div>
 		<button class="modal-close is-large" aria-label="close" on:click={()=>modal=false}></button>
 	  </div>
+	  {/if}
 	</div>
 	{#if modal}
 			{#each confetti as c}
@@ -154,10 +160,13 @@
 	@keyframes rotate{
 		100%{ transform: rotate(-360deg);}
 	}
+	.modal-background{background-color:bisque;opacity:0.2}
+	.box{border:5px dotted grey; overflow: hidden;}
 </style>
 
 <script>
-	  import {fade} from 'svelte/transition'
+	  import {fade,scale} from 'svelte/transition'
+	  import {elasticOut} from 'svelte/easing'
 	  import {onMount} from 'svelte'
 
 	  let peers = []
@@ -287,4 +296,16 @@
 
 		return () => cancelAnimationFrame(frame);
 	});
+
+	function spin(node, { duration }) {
+		return {
+			duration,
+			css: t => {
+				const eased = elasticOut(t);
+
+				return `
+					transform: scale(${eased}) rotateY(${eased * 1080}deg);`
+			}
+		}
+	}
 </script>
