@@ -1,10 +1,10 @@
-<div class="container is-max-desktop">
+<div class="container is-max-desktop">	
 	<div class="notification is-primary has-text-centered ">
 		<p>
 			<span class="b-icon icon is-size-1 has-text-danger">
 				<i class="fa fa-home" aria-hidden="true"></i>
 			</span>
-			<span class="has-text-weight-bold is-size-1 px-6">NHA Lottery</span>
+			<span class="has-text-weight-bold is-size-1 px-6">BFP R7 - NHA Lottery</span>
 			<span class="b-icon icon is-size-1 has-text-warning">
 				<i class="fa fa-trophy" aria-hidden="true"></i>
 			</span>
@@ -13,7 +13,9 @@
 			<input class="input" type="text" bind:value={SubDiv} placeholder="Enter Housing Subdivision">
 			<span class="has-text-weight-bold is-size-1">{SubDiv}</span>
 		</p>
+		<button class:is-hidden={print==false} class="delete" on:click={()=>print=!print}></button>
 	</div>
+	{#if !print}
 	<hr>
 	<div class="columns">
 		<div class="column">
@@ -57,7 +59,7 @@
 	<div class="columns">
 		<div class="column has-text-centered">
 			{#if output.length==housing.length}
-				<button class="is-large button is-info is-rounded">Print Result &nbsp; 🖨️</button>
+				<button class="is-large button is-info is-rounded" on:click={()=>print=!print}>Print Result &nbsp; 🖨️</button>
 			{:else}
 				<button class="is-large button is-success is-rounded" on:click={()=>modal=generate()}>Generate &nbsp;<span class="zap">⚡</span></button>
 			{/if}
@@ -90,13 +92,30 @@
 		</div>
 		<button class="modal-close is-large" aria-label="close" on:click={()=>modal=false}></button>
 	  </div>
+	  <audio autoplay src="https://www.voicy.network/Content/Clips/Sound/5e17e864-0edf-4bcf-aa22-07b49c45880a.mp3">
+	  </audio>
 	  {/if}
-	</div>
-	{#if modal}
-			{#each confetti as c}
-				<span class="props" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" out:fade>{c.character}</span>
+	{:else}
+	  	<table class="table is-bordered is-fullwidth is-hoverable is-striped">
+			<tr>
+				<th class="is-size-3 has-text-centered">Lucky Winners</th>
+				<th class="is-size-3 has-text-centered">Housing Units</th>
+			</tr>
+			{#each winners as winner,i}
+				<tr>
+					<td>{winner}</td>
+					<td>{housing[i]}</td>
+				</tr>
 			{/each}
+		</table>
 	{/if}
+</div>
+
+{#if modal}
+		{#each confetti as c}
+			<span class="props" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" out:fade>{c.character}</span>
+		{/each}
+{/if}
 
 <style>
 	  .nha-subdiv:hover>span{
@@ -168,6 +187,7 @@
 	  import {fade,scale} from 'svelte/transition'
 	  import {elasticOut} from 'svelte/easing'
 	  import {onMount} from 'svelte'
+import { bubble } from 'svelte/internal'
 
 	  let peers = []
 	  let housing = []
@@ -179,6 +199,7 @@
 	  let inputNHA = ''
 	  let SubDiv = "Enter Housing Subdivision"
 	  let modal = false
+	  let print = false
 
 	  function addParticipants(e,d=false){ //d is true when using the submit button
 		let peer = (typeof e ==='object')? e.target.value:e
