@@ -2,15 +2,15 @@
 	<div class="notification is-primary has-text-centered ">
 		<p>
 			<span class="b-icon icon is-size-1 has-text-danger">
-				<i class="fa fa-home" aria-hidden="true"></i>
+				<i class="fa fa-snowflake-o" aria-hidden="true"></i>
 			</span>
-			<span class="has-text-weight-bold is-size-1 px-6">BFP R7 - NHA Lottery</span>
+			<span class="has-text-weight-bold is-size-1 px-6">BFP R7 - Christmas Party</span>
 			<span class="b-icon icon is-size-1 has-text-warning">
-				<i class="fa fa-trophy" aria-hidden="true"></i>
+				<i class="fa fa-snowflake-o" aria-hidden="true"></i>
 			</span>
 		</p>
 		<p class="nha-subdiv">
-			<input class="input" type="text" bind:value={SubDiv} placeholder="Enter Housing Subdivision">
+			<input class="input" type="text" bind:value={SubDiv} placeholder="Raffle Promo!!!">
 			<span class="has-text-weight-bold is-size-1">{SubDiv}</span>
 		</p>
 		<button class:is-hidden={print==false} class="delete" on:click={()=>print=!print}></button>
@@ -39,7 +39,7 @@
 		<div class="column">
 			<details>
 				<summary class="is-size-3 has-text-centered">
-					AVAILABLE HOUSING UNITS ({housing.length})
+					AVAILABLE SLOTS ({housing.length})
 				</summary>
 				<div class="content">
 					<div class="field is-grouped">
@@ -82,11 +82,11 @@
 			</p>
 			<p>
 				<span class="b-icon icon is-size-1 has-text-danger">
-					<i class="fa fa-home" aria-hidden="true"></i>
+					<i class="fa fa-snowflake-o" aria-hidden="true"></i>
 				</span>
 				{congrats.housing}
 				<span class="b-icon icon is-size-1 has-text-danger">
-					<i class="fa fa-home" aria-hidden="true"></i>
+					<i class="fa fa-snowflake-o" aria-hidden="true"></i>
 				</span>
 			</p>
 		</div>
@@ -99,7 +99,7 @@
 	  	<table class="table is-bordered is-fullwidth is-hoverable is-striped">
 			<tr>
 				<th class="is-size-3 has-text-centered">Lucky Winners</th>
-				<th class="is-size-3 has-text-centered">Housing Units</th>
+				<th class="is-size-3 has-text-centered">RAFFLE SLOTS</th>
 			</tr>
 			{#each winners as winner,i}
 				<tr>
@@ -197,7 +197,7 @@ import { bubble } from 'svelte/internal'
 	  let congrats = {winner:'',housing:''}
 	  let inputPeer = ''
 	  let inputNHA = ''
-	  let SubDiv = "Enter Housing Subdivision"
+	  let SubDiv = "Raffle Promo!!!"
 	  let modal = false
 	  let print = false
 
@@ -266,7 +266,7 @@ import { bubble } from 'svelte/internal'
 
 	  function generate(){
 		  if(peers.length<=0) return alert("There are no participants.")
-		  if(housing.length<=0) return alert("There are no housing units.")
+		  if(housing.length<=0) return alert("There are no available slots.")
 		
 		  //Generate winner list 
 		  if(winners.length<housing.length){
