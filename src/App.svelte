@@ -43,7 +43,7 @@
 				</summary>
 				<div class="content">
 					<div class="field is-grouped">
-						<p class="control is-expanded"><input bind:value={inputNHA} type="text" class="input" placeholder="Enter Housing Unit" on:keypress={e=>addNHA(e)}></p>
+						<p class="control is-expanded"><input bind:value={inputNHA} type="text" class="input" placeholder="Enter Slots" on:keypress={e=>addNHA(e)}></p>
 						<p class="control"><button class="button is-primary" on:click={()=>addNHA(inputNHA,true)}><span class="icon is-small"><i class="fa fa-reply" aria-hidden="true"></i></span></button></p>
 					</div>
 					<ol>
